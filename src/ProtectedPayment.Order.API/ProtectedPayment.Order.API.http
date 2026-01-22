@@ -1,0 +1,6 @@
+@ProtectedPayment.Order.API_HostAddress = https://localhost:5301
+
+GET {{ProtectedPayment.Order.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
