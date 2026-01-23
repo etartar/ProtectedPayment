@@ -1,4 +1,6 @@
-﻿namespace ProtectedPayment.Database.Abstracts;
+﻿using ProtectedPayment.Bus.Shared.Events;
+
+namespace ProtectedPayment.Database.Abstracts;
 
 public abstract class BaseEntity
 {

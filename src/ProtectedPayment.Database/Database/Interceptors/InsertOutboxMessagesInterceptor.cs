@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using ProtectedPayment.Bus.Shared.Events;
 using ProtectedPayment.Database.Abstracts;
 using ProtectedPayment.Database.Entities;
 using System.Text.Json;
@@ -37,7 +38,7 @@ public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
             })
             .Select(baseEvent => new OutboxMessage
             {
-                Id = baseEvent.MessageId,
+                Id = Guid.CreateVersion7(),
                 Type = baseEvent.GetType().Name,
                 Content = JsonSerializer.Serialize(baseEvent),
                 OccurredOnUtc = baseEvent.CreatedAt

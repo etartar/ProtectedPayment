@@ -1,4 +1,5 @@
-﻿using ProtectedPayment.Database.Abstracts;
+﻿using ProtectedPayment.Bus.Shared.Events;
+using ProtectedPayment.Database.Abstracts;
 
 namespace ProtectedPayment.Database.Entities;
 
@@ -27,8 +28,58 @@ public class Order : BaseEntity
     {
         var createOrder = new Order(productName, amount, OrderStatus.Pending);
 
-        //createOrder.RaiseEvent();
+        createOrder.RaiseEvent(new OrderPendingEvent(createOrder.Id));
 
         return createOrder;
+    }
+
+    public void Confirm()
+    {
+        if (Status != OrderStatus.Pending)
+        {
+            throw new InvalidOperationException("Only pending orders can be confirmed.");
+        }
+
+        Status = OrderStatus.Confirmed;
+        ConfirmedAt = DateTime.UtcNow;
+
+        RaiseEvent(new OrderConfirmedEvent(Id));
+    }
+
+    public void Ship()
+    {
+        if (Status != OrderStatus.Confirmed)
+        {
+            throw new InvalidOperationException("Only confirmed orders can be shipped.");
+        }
+
+        Status = OrderStatus.Shipped;
+
+        RaiseEvent(new OrderShippedEvent(Id));
+    }
+
+    public void RequestCancellation()
+    {
+        if (Status != OrderStatus.Pending)
+        {
+            throw new InvalidOperationException("Only pending orders can request cancellation.");
+        }
+
+        Status = OrderStatus.CancelRequested;
+
+        RaiseEvent(new OrderCancelRequestedEvent(Id));
+    }
+
+    public void ConfirmCancellation()
+    {
+        if (Status != OrderStatus.CancelRequested)
+        {
+            throw new InvalidOperationException("Only cancel requested orders can be cancelled.");
+        }
+
+        Status = OrderStatus.Cancelled;
+        CancelledAt = DateTime.UtcNow;
+
+        RaiseEvent(new OrderCancelledEvent(Id));
     }
 }

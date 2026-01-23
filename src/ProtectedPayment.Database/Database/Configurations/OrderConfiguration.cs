@@ -18,7 +18,7 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Property(o => o.Amount).HasColumnType("decimal(18,2)");
 
-        builder.Property(o => o.Status).HasConversion<int>();
+        builder.Property(o => o.Status).HasConversion<string>();
 
         builder.Property(o => o.CreatedAt).IsRequired();
 

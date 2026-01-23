@@ -7,6 +7,7 @@ public class OrderDbContext(DbContextOptions<OrderDbContext> options) : DbContex
     public DbSet<Entities.Order> Orders { get; set; }
     public DbSet<Entities.OutboxMessage> OutboxMessages { get; set; }
     public DbSet<Entities.InboxMessage> InboxMessages { get; set; }
+    public DbSet<Entities.IdempotencyKey> IdempotencyKeys { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

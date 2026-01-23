@@ -1,4 +1,4 @@
-﻿namespace ProtectedPayment.Database.Abstracts;
+﻿namespace ProtectedPayment.Bus.Shared.Events;
 
 public interface IBaseEvent
 {
