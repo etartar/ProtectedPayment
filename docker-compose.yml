@@ -1,0 +1,52 @@
+services:
+  protectedpayment.order.api:
+    image: ${DOCKER_REGISTRY-}protectedpaymentorderapi
+    container_name: ProtectedPayment.Order.Api
+    build:
+      context: .
+      dockerfile: src/ProtectedPayment.Order.API/Dockerfile
+    ports:
+      - 5300:8080
+      - 5301:8081
+    depends_on:
+      - protectedpayment.database
+      - protectedpayment.queue
+
+  protectedpayment.worker.rabbitmq:
+    image: ${DOCKER_REGISTRY-}protectedpaymentworkerrabbitmq
+    container_name: ProtectedPayment.Worker.RabbitMQ
+    build:
+      context: .
+      dockerfile: src/ProtectedPayment.Worker.RabbitMQ/Dockerfile
+    depends_on:
+      - protectedpayment.database
+      - protectedpayment.queue
+      - protectedpayment.order.api
+
+  protectedpayment.database:
+    image: postgres:latest
+    container_name: ProtectedPayment.Database
+    restart: always
+    environment:
+      - POSTGRES_DB=protectedPaymentApp
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/database:/var/lib/postgresql
+    ports:
+      - 15432:5432
+
+  protectedpayment.queue:
+    image: rabbitmq:management-alpine
+    container_name: ProtectedPayment.Queue
+    restart: always
+    hostname: protected-payment-queue
+    volumes:
+        - ./.containers/queue/data/:/var/lib/rabbitmq
+        - ./.containers/queue/log/:/var/log/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672

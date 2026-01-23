@@ -1,0 +1,21 @@
+@ProtectedPayment.Order.API_HostAddress = https://localhost:5301
+
+### GetOrders
+
+GET {{ProtectedPayment.Order.API_HostAddress}}/orders/
+Accept: application/json
+
+### CreateOrder
+
+POST {{ProtectedPayment.Order.API_HostAddress}}/orders/
+Content-Type: application/json
+
+{
+  "productName": "Dizüstü Bilgisayar",
+  "amount": 30000
+}
+
+### CancelOrder
+
+POST {{ProtectedPayment.Order.API_HostAddress}}/orders/019becae-08ab-74a1-8c40-1c104fb533c0/cancel
+Content-Type: application/json
