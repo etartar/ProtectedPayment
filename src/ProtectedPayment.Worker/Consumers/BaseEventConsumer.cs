@@ -16,7 +16,7 @@ internal abstract class BaseEventConsumer<TEvent>(
     IServiceProvider serviceProvider) : BackgroundService where TEvent : BaseEvent
 {
     private IChannel? _channel;
-    private int _ttl = 60000; // 1 minute TTL
+    private int _ttl = 600000; // 10 minute TTL
     private string _exchangeName = string.Empty;
     private string _deadLetterExchangeName = string.Empty;
     private string _queueName = string.Empty;
