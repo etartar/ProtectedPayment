@@ -10,19 +10,21 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/ProtectedPayment.Worker.RabbitMQ/ProtectedPayment.Worker.RabbitMQ.csproj", "src/ProtectedPayment.Worker.RabbitMQ/"]
-RUN dotnet restore "./src/ProtectedPayment.Worker.RabbitMQ/ProtectedPayment.Worker.RabbitMQ.csproj"
+COPY ["src/ProtectedPayment.Worker/ProtectedPayment.Worker.csproj", "src/ProtectedPayment.Worker/"]
+COPY ["src/ProtectedPayment.Bus.Shared/ProtectedPayment.Bus.Shared.csproj", "src/ProtectedPayment.Bus.Shared/"]
+COPY ["src/ProtectedPayment.Database/ProtectedPayment.Database.csproj", "src/ProtectedPayment.Database/"]
+RUN dotnet restore "./src/ProtectedPayment.Worker/ProtectedPayment.Worker.csproj"
 COPY . .
-WORKDIR "/src/src/ProtectedPayment.Worker.RabbitMQ"
-RUN dotnet build "./ProtectedPayment.Worker.RabbitMQ.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/ProtectedPayment.Worker"
+RUN dotnet build "./ProtectedPayment.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ProtectedPayment.Worker.RabbitMQ.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ProtectedPayment.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ProtectedPayment.Worker.RabbitMQ.dll"]
+ENTRYPOINT ["dotnet", "ProtectedPayment.Worker.dll"]

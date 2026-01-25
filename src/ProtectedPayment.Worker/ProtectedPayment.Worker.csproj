@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-ProtectedPayment.Worker.RabbitMQ-b7f98155-aa84-4166-8ce7-d68af58879ff</UserSecretsId>
+    <UserSecretsId>dotnet-ProtectedPayment.Worker-3c4145ae-56e5-47de-a3ba-88049b806061</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProtectedPayment.Bus.Shared\ProtectedPayment.Bus.Shared.csproj" />
     <ProjectReference Include="..\ProtectedPayment.Database\ProtectedPayment.Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Inboxes\" />
   </ItemGroup>
 </Project>

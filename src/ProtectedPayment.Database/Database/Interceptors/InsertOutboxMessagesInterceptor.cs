@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Newtonsoft.Json;
 using ProtectedPayment.Bus.Shared.Events;
+using ProtectedPayment.Bus.Shared.Serialization;
 using ProtectedPayment.Database.Abstracts;
 using ProtectedPayment.Database.Entities;
-using System.Text.Json;
 
 namespace Evently.Common.Infrastructure.Outbox;
 
@@ -39,8 +40,9 @@ public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
             .Select(baseEvent => new OutboxMessage
             {
                 Id = Guid.CreateVersion7(),
+                IdempotencyKey = Guid.CreateVersion7(),
                 Type = baseEvent.GetType().Name,
-                Content = JsonSerializer.Serialize(baseEvent),
+                Content = JsonConvert.SerializeObject(baseEvent, SerializerSettings.Instance),
                 OccurredOnUtc = baseEvent.CreatedAt
             })
             .ToList();
