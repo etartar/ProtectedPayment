@@ -1,6 +1,8 @@
 using ETPackages.Endpoints;
+using ProtectedPayment.Bus.Shared.Extensions;
 using ProtectedPayment.Database;
 using ProtectedPayment.Order.API.Extensions;
+using ProtectedPayment.Order.API.Producers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddDatabaseProvider(builder.Configuration);
 
 builder.Services.AddEndpoints(typeof(Program).Assembly);
+
+builder.Services.AddRabbitMQ(builder.Configuration);
+
+builder.Services.AddHostedService<ProcessOutboxMessages>();
 
 var app = builder.Build();
 

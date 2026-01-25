@@ -3,7 +3,7 @@
     <Project Path="src/ProtectedPayment.Bus.Shared/ProtectedPayment.Bus.Shared.csproj" Id="8bece25c-2440-4bf6-ab61-72ed433917e9" />
     <Project Path="src/ProtectedPayment.Database/ProtectedPayment.Database.csproj" />
     <Project Path="src/ProtectedPayment.Order.API/ProtectedPayment.Order.API.csproj" />
-    <Project Path="src/ProtectedPayment.Worker.RabbitMQ/ProtectedPayment.Worker.RabbitMQ.csproj" />
+    <Project Path="src/ProtectedPayment.Worker/ProtectedPayment.Worker.csproj" Id="2f3d2281-af59-4d57-97e5-8c42fcadc95a" />
   </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />

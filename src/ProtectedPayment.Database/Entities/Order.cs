@@ -43,7 +43,7 @@ public class Order : BaseEntity
         Status = OrderStatus.Confirmed;
         ConfirmedAt = DateTime.UtcNow;
 
-        RaiseEvent(new OrderConfirmedEvent(Id));
+        RaiseEvent(new OrderShippedEvent(Id));
     }
 
     public void Ship()
@@ -54,8 +54,6 @@ public class Order : BaseEntity
         }
 
         Status = OrderStatus.Shipped;
-
-        RaiseEvent(new OrderShippedEvent(Id));
     }
 
     public void RequestCancellation()
@@ -79,7 +77,5 @@ public class Order : BaseEntity
 
         Status = OrderStatus.Cancelled;
         CancelledAt = DateTime.UtcNow;
-
-        RaiseEvent(new OrderCancelledEvent(Id));
     }
 }

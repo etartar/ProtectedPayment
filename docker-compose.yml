@@ -12,12 +12,12 @@ services:
       - protectedpayment.database
       - protectedpayment.queue
 
-  protectedpayment.worker.rabbitmq:
-    image: ${DOCKER_REGISTRY-}protectedpaymentworkerrabbitmq
-    container_name: ProtectedPayment.Worker.RabbitMQ
+  protectedpayment.worker:
+    image: ${DOCKER_REGISTRY-}protectedpaymentworker
+    container_name: ProtectedPayment.Worker
     build:
       context: .
-      dockerfile: src/ProtectedPayment.Worker.RabbitMQ/Dockerfile
+      dockerfile: src/ProtectedPayment.Worker/Dockerfile
     depends_on:
       - protectedpayment.database
       - protectedpayment.queue

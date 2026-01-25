@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "ProtectedPayment.Worker.RabbitMQ": {
+    "ProtectedPayment.Worker": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
