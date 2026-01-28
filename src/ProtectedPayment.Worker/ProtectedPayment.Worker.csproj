@@ -18,8 +18,4 @@
     <ProjectReference Include="..\ProtectedPayment.Bus.Shared\ProtectedPayment.Bus.Shared.csproj" />
     <ProjectReference Include="..\ProtectedPayment.Database\ProtectedPayment.Database.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Inboxes\" />
-  </ItemGroup>
 </Project>

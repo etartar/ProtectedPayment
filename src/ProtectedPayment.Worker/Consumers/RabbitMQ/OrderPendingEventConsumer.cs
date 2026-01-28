@@ -1,7 +1,7 @@
 ﻿using ProtectedPayment.Bus.Shared.Abstracts;
 using ProtectedPayment.Bus.Shared.Events;
 
-namespace ProtectedPayment.Worker.Consumers;
+namespace ProtectedPayment.Worker.Consumers.RabbitMQ;
 
 internal sealed class OrderPendingEventConsumer : BaseEventConsumer<OrderPendingEvent>
 {

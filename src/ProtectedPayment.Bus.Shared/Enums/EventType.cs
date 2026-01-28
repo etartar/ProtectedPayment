@@ -1,4 +1,4 @@
-﻿namespace ProtectedPayment.Bus.Shared.Events;
+﻿namespace ProtectedPayment.Bus.Shared.Enums;
 
 public enum EventType
 {

@@ -4,4 +4,5 @@ public static class QueueConstants
 {
     public const string EventType = "event-type";
     public const string IdempotencyKey = "idempotency-key";
+    public const string MessageKey = "message-key";
 }

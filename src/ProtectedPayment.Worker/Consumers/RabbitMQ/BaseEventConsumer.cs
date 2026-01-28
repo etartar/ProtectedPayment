@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProtectedPayment.Bus.Shared.Abstracts;
 using ProtectedPayment.Bus.Shared.Constants;
+using ProtectedPayment.Bus.Shared.Enums;
 using ProtectedPayment.Bus.Shared.Events;
 using ProtectedPayment.Bus.Shared.Helpers;
 using ProtectedPayment.Database.Database;
@@ -9,7 +10,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace ProtectedPayment.Worker.Consumers;
+namespace ProtectedPayment.Worker.Consumers.RabbitMQ;
 
 internal abstract class BaseEventConsumer<TEvent>(
     IBusService busService,

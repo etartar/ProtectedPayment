@@ -1,4 +1,5 @@
 using ETPackages.Endpoints;
+using ProtectedPayment.Bus.Shared.Enums;
 using ProtectedPayment.Bus.Shared.Extensions;
 using ProtectedPayment.Database;
 using ProtectedPayment.Order.API.Extensions;
@@ -14,7 +15,17 @@ builder.Services.AddDatabaseProvider(builder.Configuration);
 
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 
-builder.Services.AddRabbitMQ(builder.Configuration);
+var busServiceType = builder.Configuration.GetValue<BusServiceType>("ServiceBusOption:BusServiceType");
+
+if (busServiceType == BusServiceType.RabbitMQ)
+{
+    builder.Services.AddRabbitMQ(builder.Configuration);
+}
+
+if (busServiceType == BusServiceType.Kafka)
+{
+    builder.Services.AddKafka(builder.Configuration);
+}
 
 builder.Services.AddHostedService<ProcessOutboxMessages>();
 
