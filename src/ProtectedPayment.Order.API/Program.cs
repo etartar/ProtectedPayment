@@ -16,7 +16,8 @@ builder.Services.AddDatabaseProvider(builder.Configuration);
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 
 //builder.Services.AddRabbitMQ(builder.Configuration);
-builder.Services.AddKafka(builder.Configuration, createTopics: true);
+//builder.Services.AddKafka(builder.Configuration, createTopics: true);
+builder.Services.AddRedis(builder.Configuration, createStreams: true);
 
 builder.Services.AddHostedService<ProcessOutboxMessages>();
 

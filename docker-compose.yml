@@ -11,7 +11,7 @@
       - 5301:8081
     depends_on:
       - protectedpayment.database
-      - protectedpayment.queue.kafka
+      - protectedpayment.queue.redis
 
   protectedpayment.worker:
     image: ${DOCKER_REGISTRY-}protectedpaymentworker
@@ -22,7 +22,7 @@
     depends_on:
       - protectedpayment.database
       - protectedpayment.order.api
-      - protectedpayment.queue.kafka
+      - protectedpayment.queue.redis
       
   # ========== DATABASE (Her zaman çalışır) ==========
   protectedpayment.database:
@@ -146,7 +146,24 @@
       KAFKA_CLUSTERS_0_KSQLDBSERVER: http://ksqldb-server:8088
     depends_on:
       - protectedpayment.queue.kafka
+      
+  # ========== Redis ==========
+  protectedpayment.queue.redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --save 60 1
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
 
 volumes:
   kafka_data:
+    driver: local
+  redis_data:
     driver: local

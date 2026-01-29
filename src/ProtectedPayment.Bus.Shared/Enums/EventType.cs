@@ -2,6 +2,7 @@
 
 public enum EventType
 {
+    None = 0,
     OrderPendingEvent = 1,
     OrderConfirmedEvent = 2,
     OrderCancelRequestedEvent = 3,
