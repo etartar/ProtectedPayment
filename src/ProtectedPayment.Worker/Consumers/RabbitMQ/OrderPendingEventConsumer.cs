@@ -5,7 +5,10 @@ namespace ProtectedPayment.Worker.Consumers.RabbitMQ;
 
 internal sealed class OrderPendingEventConsumer : BaseEventConsumer<OrderPendingEvent>
 {
-    public OrderPendingEventConsumer(IBusService busService, IServiceProvider serviceProvider) : base(busService, serviceProvider)
+    public OrderPendingEventConsumer(
+        IRabbitMQConnection rabbitMQConnection,
+        IBusService busService,
+        IServiceProvider serviceProvider) : base(rabbitMQConnection, busService, serviceProvider)
     {
         SetHasDeadLetter();
     }

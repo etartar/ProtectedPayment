@@ -12,25 +12,16 @@ builder.Services.AddDatabaseProvider(builder.Configuration);
 
 builder.Services.AddSingleton<KafkaStateService>();
 
-var busServiceType = builder.Configuration.GetValue<BusServiceType>("ServiceBusOption:BusServiceType");
+//builder.Services.AddRabbitMQ(builder.Configuration);
+builder.Services.AddKafka(builder.Configuration);
 
-if (busServiceType == BusServiceType.RabbitMQ)
-{
-    builder.Services.AddRabbitMQ(builder.Configuration);
+//builder.Services.AddHostedService<OrderPendingEventConsumer>();
+//builder.Services.AddHostedService<OrderShippedEventConsumer>();
+//builder.Services.AddHostedService<OrderCancelRequestedEventConsumer>();
 
-    builder.Services.AddHostedService<OrderPendingEventConsumer>();
-    builder.Services.AddHostedService<OrderShippedEventConsumer>();
-    builder.Services.AddHostedService<OrderCancelRequestedEventConsumer>();
-}
-
-if (busServiceType == BusServiceType.Kafka)
-{
-    builder.Services.AddKafka(builder.Configuration);
-
-    builder.Services.AddHostedService<OrderPendingEventKafkaConsumer>();
-    builder.Services.AddHostedService<OrderShippedEventKafkaConsumer>();
-    builder.Services.AddHostedService<OrderCancelRequestedEventKafkaConsumer>();
-}
+builder.Services.AddHostedService<OrderPendingEventKafkaConsumer>();
+builder.Services.AddHostedService<OrderShippedEventKafkaConsumer>();
+builder.Services.AddHostedService<OrderCancelRequestedEventKafkaConsumer>();
 
 builder.Services.AddHostedService<OrderPendingEventInboxConsumer>();
 builder.Services.AddHostedService<OrderShippedEventInboxConsumer>();

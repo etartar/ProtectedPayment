@@ -13,6 +13,7 @@ using System.Text;
 namespace ProtectedPayment.Worker.Consumers.RabbitMQ;
 
 internal abstract class BaseEventConsumer<TEvent>(
+    IRabbitMQConnection rabbitMQConnection,
     IBusService busService,
     IServiceProvider serviceProvider) : BackgroundService where TEvent : BaseEvent
 {
@@ -33,7 +34,7 @@ internal abstract class BaseEventConsumer<TEvent>(
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        _channel = await busService.CreateChannelAsync();
+        _channel = await rabbitMQConnection.Connection.CreateChannelAsync();
 
         _exchangeName = RabbitMQBusHelper.GetExchangeName<TEvent>();
         _deadLetterExchangeName = RabbitMQBusHelper.GetDeadLetterExchangeName<TEvent>();

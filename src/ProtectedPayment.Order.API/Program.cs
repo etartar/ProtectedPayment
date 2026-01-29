@@ -15,17 +15,8 @@ builder.Services.AddDatabaseProvider(builder.Configuration);
 
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 
-var busServiceType = builder.Configuration.GetValue<BusServiceType>("ServiceBusOption:BusServiceType");
-
-if (busServiceType == BusServiceType.RabbitMQ)
-{
-    builder.Services.AddRabbitMQ(builder.Configuration);
-}
-
-if (busServiceType == BusServiceType.Kafka)
-{
-    builder.Services.AddKafka(builder.Configuration);
-}
+//builder.Services.AddRabbitMQ(builder.Configuration);
+builder.Services.AddKafka(builder.Configuration, createTopics: true);
 
 builder.Services.AddHostedService<ProcessOutboxMessages>();
 

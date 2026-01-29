@@ -7,7 +7,6 @@ using ProtectedPayment.Bus.Shared.Events;
 using ProtectedPayment.Bus.Shared.Helpers;
 using ProtectedPayment.Bus.Shared.Options;
 using ProtectedPayment.Bus.Shared.Serialization;
-using RabbitMQ.Client;
 using System.Text;
 
 namespace ProtectedPayment.Bus.Shared.Services
@@ -100,7 +99,5 @@ namespace ProtectedPayment.Bus.Shared.Services
             logger.LogInformation(
                 $"Message sent to topic {deliveryResult.Topic}, partition {deliveryResult.Partition}, offset {deliveryResult.Offset}");
         }
-
-        public Task<IChannel> CreateChannelAsync() => throw new NotImplementedException();
     }
 }

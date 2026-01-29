@@ -4,7 +4,8 @@ using ProtectedPayment.Bus.Shared.Events;
 namespace ProtectedPayment.Worker.Consumers.RabbitMQ;
 
 internal sealed class OrderCancelRequestedEventConsumer(
+    IRabbitMQConnection rabbitMQConnection,
     IBusService busService,
-    IServiceProvider serviceProvider) : BaseEventConsumer<OrderCancelRequestedEvent>(busService, serviceProvider)
+    IServiceProvider serviceProvider) : BaseEventConsumer<OrderCancelRequestedEvent>(rabbitMQConnection, busService, serviceProvider)
 {
 }

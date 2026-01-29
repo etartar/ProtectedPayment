@@ -1,4 +1,5 @@
 ﻿services:
+  # ========== APPLICATION SERVICES ==========
   protectedpayment.order.api:
     image: ${DOCKER_REGISTRY-}protectedpaymentorderapi
     container_name: ProtectedPayment.Order.Api
@@ -20,9 +21,10 @@
       dockerfile: src/ProtectedPayment.Worker/Dockerfile
     depends_on:
       - protectedpayment.database
-      - protectedpayment.queue.kafka
       - protectedpayment.order.api
-
+      - protectedpayment.queue.kafka
+      
+  # ========== DATABASE (Her zaman çalışır) ==========
   protectedpayment.database:
     image: postgres:latest
     container_name: ProtectedPayment.Database
@@ -36,6 +38,23 @@
     ports:
       - 15432:5432
       
+  # ========== RabbitMQ ==========
+  protectedpayment.queue.rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: ProtectedPayment.Queue.RabbitMQ
+    restart: always
+    hostname: protected-payment-queue-rabbitmq
+    volumes:
+        - ./.containers/queue/data/:/var/lib/rabbitmq
+        - ./.containers/queue/log/:/var/log/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+      
+  # ========== KAFKA ==========
   protectedpayment.queue.kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: ProtectedPayment.Queue.Kafka

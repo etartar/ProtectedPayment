@@ -10,7 +10,7 @@ namespace ProtectedPayment.Bus.Shared.Extensions;
 
 public static class KafkaExtensions
 {
-    public static IServiceCollection AddKafka(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddKafka(this IServiceCollection services, IConfiguration configuration, bool createTopics = false)
     {
         services.Configure<ServiceBusOption>(configuration.GetSection(nameof(ServiceBusOption)));
 
@@ -28,7 +28,11 @@ public static class KafkaExtensions
             var logger = sp.GetRequiredService<ILogger<KafkaBusService>>();
 
             var kafkaBus = new KafkaBusService(logger, serviceBusOptions);
-            kafkaBus.CreateTopics().Wait();
+            
+            if (createTopics)
+            {
+                kafkaBus.CreateTopics().Wait();
+            }
 
             return kafkaBus;
         });

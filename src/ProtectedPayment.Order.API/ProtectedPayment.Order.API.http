@@ -11,11 +11,11 @@ POST {{ProtectedPayment.Order.API_HostAddress}}/orders/
 Content-Type: application/json
 
 {
-  "productName": "Samsung 92",
+  "productName": "Caretta 35",
   "amount": 120000
 }
 
 ### CancelOrder
 
-POST {{ProtectedPayment.Order.API_HostAddress}}/orders/019c0488-192a-72e8-9184-4acf40a4c204/cancel
+POST {{ProtectedPayment.Order.API_HostAddress}}/orders/019c0b09-2a8d-7253-a764-cba699f01d5f/cancel
 Content-Type: application/json

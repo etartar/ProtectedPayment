@@ -4,9 +4,11 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "protectedpayment.api": "StartDebugging",
         "protectedpayment.order.api": "StartDebugging",
-        "protectedpayment.worker.rabbitmq": "StartDebugging"
+        "protectedpayment.worker": "StartDebugging",
+        "protectedpayment.database": "StartWithoutDebugging",
+        "protectedpayment.queue.kafka": "StartWithoutDebugging",
+        "protectedpayment.queue.kafka-ui": "StartWithoutDebugging"
       }
     }
   }
