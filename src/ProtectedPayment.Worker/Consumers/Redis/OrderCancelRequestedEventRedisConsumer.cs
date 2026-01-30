@@ -1,12 +1,8 @@
-﻿using Confluent.Kafka;
-using ProtectedPayment.Bus.Shared.Abstracts;
+﻿using ProtectedPayment.Bus.Shared.Abstracts;
 using ProtectedPayment.Bus.Shared.Enums;
 using ProtectedPayment.Bus.Shared.Events;
 using ProtectedPayment.Worker.Services;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProtectedPayment.Worker.Consumers.Redis;
 
@@ -57,7 +53,7 @@ internal sealed class OrderCancelRequestedEventRedisConsumer : BaseRedisEventCon
                     _logger.LogInformation("Cancelling payment for Order {OrderId}", orderCancelRequestedEvent!.OrderId);
 
                     // Pending listesinden çıkar
-                    _redisStateService.RemoveOrderPendingMessage(orderCancelRequestedEvent!.OrderId);
+                    await _redisStateService.RemoveOrderPendingMessage(orderCancelRequestedEvent!.OrderId);
 
                     await ProcessEvent(orderCancelRequestedEvent, idempotencyKey, eventType);
 

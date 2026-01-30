@@ -97,8 +97,9 @@ internal sealed class OrderPendingEventRedisConsumer : BaseRedisEventConsumer<Or
             );
 
             // Pending listesine ekle (henüz commit etme!)
-            _redisStateService.AddOrderPendingMessage(
+            await _redisStateService.AddOrderPendingMessage(
                 orderPendingEvent.OrderId,
+                orderPendingEvent.ScheduledTime,
                 new OrderPendingRedisHistory(orderPendingEvent, idempotencyKey, eventType));
         }
 
@@ -107,20 +108,31 @@ internal sealed class OrderPendingEventRedisConsumer : BaseRedisEventConsumer<Or
 
     private async Task ProcessDueMessagesAsync()
     {
-        var duePayments = _redisStateService.PendingMessages
-            .Where(kvp => kvp.Value.Event.ScheduledTime <= DateTime.UtcNow)
-            .ToList();
+        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-        foreach (var (orderId, orderPendingHistory) in duePayments)
+        var dueOrders = await _redisStateService.GetDueOrders();
+
+        foreach (var orderIdValue in dueOrders)
         {
+            Guid orderId = Guid.Parse(orderIdValue.ToString());
+
             try
             {
                 _logger.LogInformation("Processing scheduled payment for Order {OrderId}", orderId);
 
+                OrderPendingRedisHistory? orderPendingHistory = await _redisStateService.GetOrderPendingData(orderId);
+
+                if (orderPendingHistory is null)
+                {
+                    _logger.LogWarning("No pending data found for Order {OrderId}", orderId);
+
+                    continue;
+                }
+
                 await ProcessEvent(orderPendingHistory.Event, orderPendingHistory.IdempotencyKey, orderPendingHistory.EventType);
 
                 // Listeden çıkar
-                _redisStateService.RemoveOrderPendingMessage(orderId);
+                await _redisStateService.RemoveOrderPendingMessage(orderId);
             }
             catch (Exception ex)
             {
