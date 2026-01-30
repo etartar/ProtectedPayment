@@ -62,6 +62,8 @@ public sealed class RedisStateService
 
         // Event'i sil
         await _db.KeyDeleteAsync(string.Format(ORDER_PENDING_DATA, orderId));
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
     }
 }
 
