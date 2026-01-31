@@ -3,12 +3,9 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composePath": "docker-compose.yml",
       "serviceActions": {
-        "protectedpayment.order.api": "StartDebugging",
-        "protectedpayment.worker": "StartDebugging",
-        "protectedpayment.database": "StartWithoutDebugging",
-        "protectedpayment.queue.kafka": "StartWithoutDebugging",
-        "protectedpayment.queue.kafka-ui": "StartWithoutDebugging"
+        "protectedpayment.database": "StartWithoutDebugging"
       }
     }
   }

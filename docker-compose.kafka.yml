@@ -1,4 +1,42 @@
 services:
+  # ========== APPLICATION SERVICES ==========
+  protectedpayment.order.api:
+    image: ${DOCKER_REGISTRY-}protectedpaymentorderapi
+    container_name: ProtectedPayment.Order.Api
+    build:
+      context: .
+      dockerfile: src/ProtectedPayment.Order.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - BUS_SERVICE_TYPE=Kafka
+      - ConnectionStrings__Database=Host=protectedpayment.database;Port=5432;Database=protectedPaymentApp;Username=postgres;Password=postgres;Include Error Detail=true
+      - ServiceBusOption__KafkaBootstrapServers=protectedpayment.queue.kafka:9094
+    ports:
+      - 5300:8080
+    depends_on:
+      protectedpayment.database:
+        condition: service_healthy
+      protectedpayment.queue.kafka:
+        condition: service_healthy
+
+  protectedpayment.worker:
+    image: ${DOCKER_REGISTRY-}protectedpaymentworker
+    container_name: ProtectedPayment.Worker
+    build:
+      context: .
+      dockerfile: src/ProtectedPayment.Worker/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - BUS_SERVICE_TYPE=Kafka
+      - ConnectionStrings__Database=Host=protectedpayment.database;Port=5432;Database=protectedPaymentApp;Username=postgres;Password=postgres;Include Error Detail=true
+      - ServiceBusOption__KafkaBootstrapServers=protectedpayment.queue.kafka:9094
+    depends_on:
+      protectedpayment.database:
+        condition: service_healthy
+      protectedpayment.queue.kafka:
+        condition: service_healthy
+      
   # ========== DATABASE (Her zaman çalışır) ==========
   protectedpayment.database:
     image: postgres:latest
@@ -8,22 +46,11 @@ services:
       - ./.containers/database:/var/lib/postgresql
     ports:
       - 15432:5432
-      
-  # ========== RabbitMQ ==========
-  protectedpayment.queue.rabbitmq:
-    image: rabbitmq:management-alpine
-    container_name: ProtectedPayment.Queue.RabbitMQ
-    restart: always
-    hostname: protected-payment-queue-rabbitmq
-    volumes:
-        - ./.containers/queue/data/:/var/lib/rabbitmq
-        - ./.containers/queue/log/:/var/log/rabbitmq
-    environment:
-        RABBITMQ_DEFAULT_USER: guest
-        RABBITMQ_DEFAULT_PASS: guest
-    ports:
-      - 5672:5672
-      - 15672:15672
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
       
   # ========== KAFKA ==========
   protectedpayment.queue.kafka:
@@ -66,7 +93,7 @@ services:
       # Client'lara duyurulan adresler (client'lar bu adreslere bağlanır)
       # PLAINTEXT://kafka:9092 - Docker network içinden bağlananlar için
       # EXTERNAL://localhost:9094 - Host makinesinden bağlananlar için
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://protectedpayment.queue.kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://protectedpayment.queue.kafka:9092,EXTERNAL://protectedpayment.queue.kafka:9094
       
       # Her listener için güvenlik protokolü mapping
       # PLAINTEXT: Şifreleme yok, kimlik doğrulama yok (development için)
@@ -99,16 +126,21 @@ services:
       # Transaction log için minimum in-sync replica sayısı
       # ISR (In-Sync Replica): Leader ile senkron olan replica'lar
       # 1 = En az 1 replica senkron olmalı (development için)
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-    
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1    
     volumes:
-      - kafka_data:/var/lib/kafka/data
+      - kafka_data:/var/lib/kafka/data      
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/9092'"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
   protectedpayment.queue.kafka-ui:
     container_name: ProtectedPayment.Queue.Kafka.UI
     image: provectuslabs/kafka-ui:v0.7.2
     ports:
-      - "8080:8080"
+      - "8888:8080"
     environment:
       DYNAMIC_CONFIG_ENABLED: 'true'
       KAFKA_CLUSTERS_0_NAME: local
@@ -116,25 +148,9 @@ services:
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
       KAFKA_CLUSTERS_0_KSQLDBSERVER: http://ksqldb-server:8088
     depends_on:
-      - protectedpayment.queue.kafka
+      protectedpayment.queue.kafka:
+        condition: service_healthy
       
-  # ========== Redis ==========
-  protectedpayment.queue.redis:
-    image: redis:7.2-alpine
-    container_name: ProtectedPayment.Queue.Redis
-    ports:
-      - "6379:6379"
-    command: >
-      redis-server
-      --appendonly yes
-      --appendfsync everysec
-      --save 60 1
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-
 volumes:
   kafka_data:
-    driver: local
-  redis_data:
     driver: local

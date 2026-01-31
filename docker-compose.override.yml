@@ -1,21 +1,7 @@
 services:
-  protectedpayment.order.api:
+  # ========== DATABASE (Her zaman çalışır) ==========
+  protectedpayment.database:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-      - BUS_SERVICE_TYPE=Kafka
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      
-  protectedpayment.worker:
-    environment:
-      - DOTNET_ENVIRONMENT=Development
-      - BUS_SERVICE_TYPE=Kafka
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
- 
+      - POSTGRES_DB=protectedPaymentApp
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres

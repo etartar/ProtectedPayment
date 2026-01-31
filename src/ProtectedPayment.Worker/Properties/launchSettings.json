@@ -1,9 +1,26 @@
 {
   "profiles": {
-    "ProtectedPayment.Worker": {
+    "ProtectedPayment.Worker.RabbitMQ": {
       "commandName": "Project",
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development",
+        "BUS_SERVICE_TYPE": "RabbitMQ"
+      },
+      "dotnetRunMessages": true
+    },
+    "ProtectedPayment.Worker.Kafka": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "BUS_SERVICE_TYPE": "Kafka"
+      },
+      "dotnetRunMessages": true
+    },
+    "ProtectedPayment.Worker.Redis": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "BUS_SERVICE_TYPE": "Redis"
       },
       "dotnetRunMessages": true
     },

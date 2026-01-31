@@ -3,6 +3,7 @@ using ProtectedPayment.Bus.Shared.Enums;
 using ProtectedPayment.Bus.Shared.Events;
 using ProtectedPayment.Bus.Shared.Options;
 using ProtectedPayment.Worker.Services;
+using System.Threading;
 
 namespace ProtectedPayment.Worker.Consumers.Kafka;
 
@@ -46,6 +47,8 @@ internal sealed class OrderPendingEventKafkaConsumer : BaseKafkaEventConsumer<Or
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, $"Error consuming message: {ex.Message}");
+
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
         }
 

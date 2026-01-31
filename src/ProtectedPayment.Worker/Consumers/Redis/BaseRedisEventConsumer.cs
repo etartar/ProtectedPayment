@@ -34,6 +34,8 @@ internal abstract class BaseRedisEventConsumer<TEvent> : BackgroundService where
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
+        await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+
         _db = _redisConnection.GetDatabase();
 
         _streamName = RedisBusHelper.GetStreamName<TEvent>();

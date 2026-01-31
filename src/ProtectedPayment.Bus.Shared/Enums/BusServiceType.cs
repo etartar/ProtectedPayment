@@ -4,6 +4,6 @@
     {
         RabbitMQ = 1,
         Kafka = 2,
-        RedisStreams = 3
+        Redis = 3
     }
 }

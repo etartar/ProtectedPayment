@@ -53,6 +53,8 @@ internal class OrderShippedEventRedisConsumer : BaseRedisEventConsumer<OrderShip
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing OrderShippedEvent: {errorMessage}", ex.Message);
+
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
 
             await Task.Delay(1000, stoppingToken);

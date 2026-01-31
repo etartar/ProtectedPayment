@@ -52,6 +52,8 @@ internal sealed class OrderCancelRequestedEventKafkaConsumer : BaseKafkaEventCon
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, $"Error consuming message: {ex.Message}");
+
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
         }
 

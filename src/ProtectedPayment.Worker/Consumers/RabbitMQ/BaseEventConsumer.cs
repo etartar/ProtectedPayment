@@ -34,6 +34,8 @@ internal abstract class BaseEventConsumer<TEvent>(
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
+        await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+
         _channel = await rabbitMQConnection.Connection.CreateChannelAsync();
 
         _exchangeName = RabbitMQBusHelper.GetExchangeName<TEvent>();

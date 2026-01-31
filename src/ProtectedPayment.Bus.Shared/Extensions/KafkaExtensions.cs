@@ -28,7 +28,7 @@ public static class KafkaExtensions
             var logger = sp.GetRequiredService<ILogger<KafkaBusService>>();
 
             var kafkaBus = new KafkaBusService(logger, serviceBusOptions);
-            
+
             if (createTopics)
             {
                 kafkaBus.CreateTopics().Wait();

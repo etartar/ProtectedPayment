@@ -30,8 +30,10 @@ namespace ProtectedPayment.Worker.Consumers.Kafka
             _logger = logger;
         }
 
-        public override Task StartAsync(CancellationToken cancellationToken)
+        public override async Task StartAsync(CancellationToken cancellationToken)
         {
+            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+
             var consumerConfig = new ConsumerConfig
             {
                 BootstrapServers = _busOption.KafkaBootstrapServers,
@@ -47,7 +49,7 @@ namespace ProtectedPayment.Worker.Consumers.Kafka
 
             _consumer.Subscribe(KafkaBusHelper.GetTopicName<TEvent>());
 
-            return base.StartAsync(cancellationToken);
+            await base.StartAsync(cancellationToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)

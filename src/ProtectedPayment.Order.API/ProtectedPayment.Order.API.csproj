@@ -8,9 +8,11 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    <NuGetAuditMode>all</NuGetAuditMode>
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Scalar.AspNetCore" Version="2.12.24" />
 	<PackageReference Include="ETPackages.Endpoints" Version="2.0.0" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2">
 		<PrivateAssets>all</PrivateAssets>

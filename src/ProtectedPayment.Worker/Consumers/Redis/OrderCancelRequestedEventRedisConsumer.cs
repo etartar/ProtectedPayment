@@ -63,6 +63,8 @@ internal sealed class OrderCancelRequestedEventRedisConsumer : BaseRedisEventCon
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing OrderCancelRequestedEvent: {errorMessage}", ex.Message);
+
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
 
             await Task.Delay(1000, stoppingToken);

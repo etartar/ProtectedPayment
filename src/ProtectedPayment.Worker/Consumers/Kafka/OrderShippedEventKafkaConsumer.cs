@@ -43,6 +43,8 @@ internal sealed class OrderShippedEventKafkaConsumer : BaseKafkaEventConsumer<Or
                 // 2. options = move message to error-topic
 
                 _logger.LogCritical(ex, $"Error consuming message: {ex.Message}");
+
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
         }
 

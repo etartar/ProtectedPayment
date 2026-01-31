@@ -11,24 +11,39 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddDatabaseProvider(builder.Configuration);
 
-//builder.Services.AddSingleton<KafkaStateService>();
-builder.Services.AddSingleton<RedisStateService>();
+var serviceTypeStr = Environment.GetEnvironmentVariable("BUS_SERVICE_TYPE");
 
-//builder.Services.AddRabbitMQ(builder.Configuration);
-//builder.Services.AddKafka(builder.Configuration);
-builder.Services.AddRedis(builder.Configuration);
+if (!Enum.TryParse<BusServiceType>(serviceTypeStr, out var busServiceType))
+{
+    throw new InvalidOperationException($"Invalid BusServiceType: {serviceTypeStr}");
+}
 
-//builder.Services.AddHostedService<OrderPendingEventConsumer>();
-//builder.Services.AddHostedService<OrderShippedEventConsumer>();
-//builder.Services.AddHostedService<OrderCancelRequestedEventConsumer>();
+if (busServiceType == BusServiceType.RabbitMQ)
+{
+    builder.Services.AddRabbitMQ(builder.Configuration, createExchanges: true);
 
-//builder.Services.AddHostedService<OrderPendingEventKafkaConsumer>();
-//builder.Services.AddHostedService<OrderShippedEventKafkaConsumer>();
-//builder.Services.AddHostedService<OrderCancelRequestedEventKafkaConsumer>();
+    builder.Services.AddHostedService<OrderPendingEventConsumer>();
+    builder.Services.AddHostedService<OrderShippedEventConsumer>();
+    builder.Services.AddHostedService<OrderCancelRequestedEventConsumer>();
+}
+else if (busServiceType == BusServiceType.Kafka)
+{
+    builder.Services.AddSingleton<KafkaStateService>();
+    builder.Services.AddKafka(builder.Configuration, createTopics: true);
 
-builder.Services.AddHostedService<OrderPendingEventRedisConsumer>();
-builder.Services.AddHostedService<OrderShippedEventRedisConsumer>();
-builder.Services.AddHostedService<OrderCancelRequestedEventRedisConsumer>();
+    builder.Services.AddHostedService<OrderPendingEventKafkaConsumer>();
+    builder.Services.AddHostedService<OrderShippedEventKafkaConsumer>();
+    builder.Services.AddHostedService<OrderCancelRequestedEventKafkaConsumer>();
+}
+else if (busServiceType == BusServiceType.Redis)
+{
+    builder.Services.AddSingleton<RedisStateService>();
+    builder.Services.AddRedis(builder.Configuration, createStreams: true);
+
+    builder.Services.AddHostedService<OrderPendingEventRedisConsumer>();
+    builder.Services.AddHostedService<OrderShippedEventRedisConsumer>();
+    builder.Services.AddHostedService<OrderCancelRequestedEventRedisConsumer>();
+}
 
 builder.Services.AddHostedService<OrderPendingEventInboxConsumer>();
 builder.Services.AddHostedService<OrderShippedEventInboxConsumer>();

@@ -10,28 +10,43 @@
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5300"
     },
-    "https": {
+    "ProtectedPayment.Order.Api.RabbitMQ": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchUrl": "scalar/v1",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BUS_SERVICE_TYPE": "RabbitMQ"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:5301;http://localhost:5300"
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
+    "ProtectedPayment.Order.Api.Kafka": {
+      "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchUrl": "scalar/v1",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BUS_SERVICE_TYPE": "Kafka"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:5301;http://localhost:5300"
+    },
+    "ProtectedPayment.Order.Api.Redis": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "scalar/v1",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BUS_SERVICE_TYPE": "Redis"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:5301;http://localhost:5300"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/scalar/v1",
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "5300",
         "ASPNETCORE_HTTP_PORTS": "5301"
