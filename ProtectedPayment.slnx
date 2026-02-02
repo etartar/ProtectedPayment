@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/ProtectedPayment.Bus.Shared/ProtectedPayment.Bus.Shared.csproj" Id="8bece25c-2440-4bf6-ab61-72ed433917e9" />
     <Project Path="src/ProtectedPayment.Database/ProtectedPayment.Database.csproj" />
