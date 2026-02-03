@@ -28,7 +28,7 @@ public class Order : BaseEntity
     {
         var createOrder = new Order(productName, amount, OrderStatus.Pending);
 
-        createOrder.RaiseEvent(new OrderPendingEvent(createOrder.Id));
+        createOrder.RaiseEvent(new OrderPendingEvent(createOrder.Id, createOrder.PendingUntil));
 
         return createOrder;
     }

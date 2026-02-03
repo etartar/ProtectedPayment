@@ -37,6 +37,8 @@ public class ProcessOutboxMessages(
 
                     var getEvent = JsonConvert.DeserializeObject<BaseEvent>(message.Content, SerializerSettings.Instance);
 
+                    headers.Add(QueueConstants.MessageKey, getEvent!.MessageKey.ToString());
+
                     await Policy
                         .Handle<Exception>()
                         .WaitAndRetryAsync(

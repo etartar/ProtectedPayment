@@ -1,4 +1,4 @@
-﻿using ProtectedPayment.Bus.Shared.Events;
+﻿using ProtectedPayment.Bus.Shared.Enums;
 
 namespace ProtectedPayment.Database.Entities;
 

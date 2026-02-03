@@ -2,31 +2,15 @@
 using ProtectedPayment.Bus.Shared.Abstracts;
 using ProtectedPayment.Bus.Shared.Events;
 using ProtectedPayment.Bus.Shared.Helpers;
-using ProtectedPayment.Bus.Shared.Options;
 using ProtectedPayment.Bus.Shared.Serialization;
 using RabbitMQ.Client;
 using System.Text;
 
 namespace ProtectedPayment.Bus.Shared.Services;
 
-public sealed class RabbitMQBusService(ServiceBusOption busOption) : IBusService
+public sealed class RabbitMQBusService(IRabbitMQConnection rabbitMQConnection) : IBusService
 {
     public static Dictionary<object, string> ExchangeList = new();
-    private IConnection? _connection;
-    private IChannel? _channel;
-
-    public async Task Init()
-    {
-        //Factory Method Design method
-        var connectionFactory = new ConnectionFactory
-        {
-            Uri = new Uri(busOption.RabbitMqConnectionString)
-        };
-
-        _connection = await connectionFactory.CreateConnectionAsync();
-
-        _channel = await _connection!.CreateChannelAsync(new CreateChannelOptions(true, true));
-    }
 
     static RabbitMQBusService()
     {
@@ -39,15 +23,10 @@ public sealed class RabbitMQBusService(ServiceBusOption busOption) : IBusService
 
     public async Task CreateExchanges()
     {
-        var channel = await _connection!.CreateChannelAsync();
+        var channel = await rabbitMQConnection.Connection!.CreateChannelAsync();
         foreach (var exchange in ExchangeList)
             await channel.ExchangeDeclareAsync(exchange.Value, ExchangeType.Fanout, true, false);
         await channel.DisposeAsync();
-    }
-
-    public Task<IChannel> CreateChannelAsync()
-    {
-        return _connection!.CreateChannelAsync();
     }
 
     public async Task PublishAsync<T>(T message, Dictionary<string, object>? headers = null) where T : BaseEvent
@@ -57,7 +36,7 @@ public sealed class RabbitMQBusService(ServiceBusOption busOption) : IBusService
         if (string.IsNullOrEmpty(exchangeName))
             throw new ArgumentException($"Exchange name not found for message type {message.GetType().FullName}");
 
-        await _channel!.ExchangeDeclareAsync(exchangeName, ExchangeType.Fanout, true, false);
+        await rabbitMQConnection.Channel!.ExchangeDeclareAsync(exchangeName, ExchangeType.Fanout, true, false);
 
         var eventAsJsonData = JsonConvert.SerializeObject(message, SerializerSettings.Instance);
 
@@ -73,6 +52,6 @@ public sealed class RabbitMQBusService(ServiceBusOption busOption) : IBusService
             properties.Headers = headers!;
         }
 
-        await _channel.BasicPublishAsync(exchangeName, string.Empty, true, properties, body);
+        await rabbitMQConnection.Channel.BasicPublishAsync(exchangeName, string.Empty, true, properties, body);
     }
 }

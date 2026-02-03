@@ -4,15 +4,20 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>81dded9d-158b-e303-5f62-77a2896d2a5a</ProjectGuid>
-  </PropertyGroup>
-  <PropertyGroup>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/scalar/v1</DockerServiceUrl>
     <DockerServiceName>ProtectedPayment</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="docker-compose.rabbitmq.yml" />
+	<None Include="docker-compose.kafka.yml" />	  
+    <None Include="docker-compose.redis.yml" />	  	  
+    <None Include="docker-compose.yml" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
-    <None Include="docker-compose.yml" />
+	  
+    <None Include="launchSettings.json" />
     <None Include=".dockerignore" />
   </ItemGroup>
 </Project>

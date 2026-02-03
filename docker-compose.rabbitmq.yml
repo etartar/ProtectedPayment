@@ -1,0 +1,81 @@
+services:
+  # ========== APPLICATION SERVICES ==========
+  protectedpayment.order.api:
+    image: ${DOCKER_REGISTRY-}protectedpaymentorderapi
+    container_name: ProtectedPayment.Order.Api
+    build:
+      context: .
+      dockerfile: src/ProtectedPayment.Order.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - BUS_SERVICE_TYPE=RabbitMQ
+      - ConnectionStrings__Database=Host=protectedpayment.database;Port=5432;Database=protectedPaymentApp;Username=postgres;Password=postgres;Include Error Detail=true
+      - ServiceBusOption__RabbitMqConnectionString=amqp://protected-payment-queue-rabbitmq:5672
+    ports:
+      - 5300:8080
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      protectedpayment.database:
+        condition: service_healthy
+      protectedpayment.queue.rabbitmq:
+        condition: service_healthy
+
+  protectedpayment.worker:
+    image: ${DOCKER_REGISTRY-}protectedpaymentworker
+    container_name: ProtectedPayment.Worker
+    build:
+      context: .
+      dockerfile: src/ProtectedPayment.Worker/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - BUS_SERVICE_TYPE=RabbitMQ
+      - ConnectionStrings__Database=Host=protectedpayment.database;Port=5432;Database=protectedPaymentApp;Username=postgres;Password=postgres;Include Error Detail=true
+      - ServiceBusOption__RabbitMqConnectionString=amqp://protected-payment-queue-rabbitmq:5672
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+    depends_on:
+      protectedpayment.database:
+        condition: service_healthy
+      protectedpayment.queue.rabbitmq:
+        condition: service_healthy
+      protectedpayment.order.api:
+        condition: service_started
+      
+  # ========== DATABASE (Her zaman çalışır) ==========
+  protectedpayment.database:
+    image: postgres:latest
+    container_name: ProtectedPayment.Database
+    restart: always
+    volumes:
+      - ./.containers/database:/var/lib/postgresql
+    ports:
+      - 15432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  # ========== RabbitMQ ==========
+  protectedpayment.queue.rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: ProtectedPayment.Queue.RabbitMQ
+    restart: always
+    hostname: protected-payment-queue-rabbitmq
+    volumes:
+        - ./.containers/queue/data/:/var/lib/rabbitmq
+        - ./.containers/queue/log/:/var/log/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

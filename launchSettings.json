@@ -3,10 +3,9 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composePath": "docker-compose.yml",
       "serviceActions": {
-        "protectedpayment.api": "StartDebugging",
-        "protectedpayment.order.api": "StartDebugging",
-        "protectedpayment.worker.rabbitmq": "StartDebugging"
+        "protectedpayment.database": "StartWithoutDebugging"
       }
     }
   }

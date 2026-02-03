@@ -1,3 +1,3 @@
 ﻿namespace ProtectedPayment.Bus.Shared.Events;
 
-public record OrderCancelRequestedEvent(Guid OrderId) : BaseEvent;
+public record OrderCancelRequestedEvent(Guid OrderId) : BaseEvent(OrderId);

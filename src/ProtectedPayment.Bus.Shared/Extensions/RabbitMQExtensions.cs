@@ -9,7 +9,7 @@ namespace ProtectedPayment.Bus.Shared.Extensions;
 
 public static class RabbitMQExtensions
 {
-    public static IServiceCollection AddRabbitMQ(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddRabbitMQ(this IServiceCollection services, IConfiguration configuration, bool createExchanges = false)
     {
         services.Configure<ServiceBusOption>(configuration.GetSection(nameof(ServiceBusOption)));
 
@@ -20,13 +20,27 @@ public static class RabbitMQExtensions
             return optionsServiceBus.Value;
         });
 
-        services.AddSingleton<IBusService, RabbitMQBusService>(sp =>
+        services.AddSingleton<IRabbitMQConnection, RabbitMQConnection>(sp =>
         {
             var serviceBusOptions = sp.GetRequiredService<ServiceBusOption>();
 
-            var rabbitMqBus = new RabbitMQBusService(serviceBusOptions);
+            var rabbitMqBus = new RabbitMQConnection(serviceBusOptions);
+
             rabbitMqBus.Init().Wait();
-            rabbitMqBus.CreateExchanges().Wait();
+
+            return rabbitMqBus;
+        });
+
+        services.AddSingleton<IBusService, RabbitMQBusService>(sp =>
+        {
+            var rabbitMQService = sp.GetRequiredService<IRabbitMQConnection>();
+
+            var rabbitMqBus = new RabbitMQBusService(rabbitMQService);
+            
+            if (createExchanges)
+            {
+                rabbitMqBus.CreateExchanges().Wait();
+            }
 
             return rabbitMqBus;
         });

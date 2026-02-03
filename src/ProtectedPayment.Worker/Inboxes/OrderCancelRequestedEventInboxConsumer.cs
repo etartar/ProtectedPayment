@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using ProtectedPayment.Bus.Shared.Enums;
 using ProtectedPayment.Bus.Shared.Events;
 using ProtectedPayment.Bus.Shared.Serialization;
 using ProtectedPayment.Database.Database;
 using ProtectedPayment.Database.Entities;
 
-namespace ProtectedPayment.Worker.Consumers;
+namespace ProtectedPayment.Worker.Inboxes;
 
 internal sealed class OrderCancelRequestedEventInboxConsumer(ILogger<OrderCancelRequestedEventInboxConsumer> logger, IServiceProvider serviceProvider) : BackgroundService
 {
