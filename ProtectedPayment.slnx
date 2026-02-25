@@ -2,11 +2,24 @@
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
-  <Folder Name="/src/">
-    <Project Path="src/ProtectedPayment.Bus.Shared/ProtectedPayment.Bus.Shared.csproj" Id="8bece25c-2440-4bf6-ab61-72ed433917e9" />
-    <Project Path="src/ProtectedPayment.Database/ProtectedPayment.Database.csproj" />
-    <Project Path="src/ProtectedPayment.Order.API/ProtectedPayment.Order.API.csproj" />
-    <Project Path="src/ProtectedPayment.Worker/ProtectedPayment.Worker.csproj" Id="2f3d2281-af59-4d57-97e5-8c42fcadc95a" />
+  <Folder Name="/src/" />
+  <Folder Name="/src/application/">
+    <Project Path="src/application/ProtectedPayment.Application.Contracts/ProtectedPayment.Application.Contracts.csproj" Id="115741d1-450f-4b10-923c-36b977fd5cf0" />
+    <Project Path="src/application/ProtectedPayment.Application/ProtectedPayment.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/domain/">
+    <Project Path="src/domain/ProtectedPayment.Domain/ProtectedPayment.Domain.csproj" />
+    <Project Path="src/domain/ProtectedPayment.SharedKernel/ProtectedPayment.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/src/host/">
+    <Project Path="src/host/ProtectedPayment.Order.API/ProtectedPayment.Order.API.csproj" />
+    <Project Path="src/host/ProtectedPayment.Worker/ProtectedPayment.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/infrastructure/">
+    <Project Path="src/infrastructure/ProtectedPayment.Infrastructure/ProtectedPayment.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/presentation/">
+    <Project Path="src/presentation/ProtectedPayment.Presentation.API/ProtectedPayment.Presentation.API.csproj" Id="30e462d3-8f31-4121-96b7-43566ea3cf57" />
   </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />

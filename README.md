@@ -2,6 +2,15 @@
 
 <div align="center">
 
+[![Turkish](https://img.shields.io/badge/🇹🇷_Turkish-blue?style=for-the-badge)](README.md)
+[![English](https://img.shields.io/badge/🇬🇧_English-gray?style=for-the-badge)](README_EN.md)
+
+</div>
+
+---
+
+<div align="center">
+
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
 ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)
@@ -15,18 +24,104 @@
 
 ## 📌 Proje Tanıtımı
 
-**ProtectedPayment**, e-ticaret platformları için geliştirilmiş, asenkron mesajlaşma teknolojileri kullanarak korumalı ödeme sistemi implementasyonudur. Kullanıcıların sipariş verdikten sonra 10 dakika boyunca ödemeyi durdurma veya iptal etme hakkına sahip olduğu bir senaryo üzerine kurgulanmıştır.
+**ProtectedPayment**, e-ticaret platformları için geliştirilmiş, **Clean Architecture** prensiplerine uygun olarak tasarlanmış ve asenkron mesajlaşma teknolojileri kullanarak korumalı ödeme sistemi implementasyonudur. Kullanıcıların sipariş verdikten sonra 10 dakika boyunca ödemeyi durdurma veya iptal etme hakkına sahip olduğu bir senaryo üzerine kurgulanmıştır.
 
 ### 🎯 Temel Özellikler:
+- ✅ **Clean Architecture**: Domain-centric, bağımlılıkların içe doğru olduğu katmanlı mimari
 - ✅ **Sipariş Yönetimi**: Bekleme, gönderim ve iptal olaylarının yönetimi
 - ✅ **10 Dakikalık İptal Penceresi**: Kullanıcı sipariş sonrası ödemeyi durdurabilir veya iptal edebilir
 - ✅ **Asenkron İşlem**: Ödeme provizyonda bekletilir, işlemler asenkron olarak gerçekleşir
 - ✅ **Üç Farklı Mesajlaşma Teknolojisi**: RabbitMQ, Apache Kafka ve Redis Streams
-- ✅ **Ölçeklenebilir Mimari**: Mikro hizmetler yapısı
-- ✅ **Event Sourcing**: Tüm ödeme olayları kayıt altında
+- ✅ **Outbox Pattern**: Transactional messaging ile tutarlılık garantisi
+- ✅ **Inbox Pattern**: İdempotent message processing
+- ✅ **Event-Driven Architecture**: Asenkron mesajlaşma ile loose coupling
+- ✅ **Ölçeklenebilir Mimari**: Katmanlı ve test edilebilir yapı
 - ✅ **Docker Desteği**: Containerize edilmiş dağıtım
 
-### 🔄 İş Akışı
+---
+
+## 🏗️ Clean Architecture Yapısı
+
+Proje, **Clean Architecture** prensiplerine uygun olarak katmanlara ayrılmıştır:
+
+```
+ProtectedPayment/
+├── src/
+│   ├── domain/                          # Domain Layer (En içteki katman)
+│   │   ├── ProtectedPayment.Domain/     # İş kuralları ve domain mantığı
+│   │   │   ├── Entities/                # Domain entities (Order, OutboxMessage, InboxMessage, IdempotencyKey)
+│   │   │   ├── Events/                  # Event models (OrderPendingEvent, OrderCancelledEvent, vb.)
+│   │   │   ├── Repositories/            # Repository interfaces (IOrderRepository, IUnitOfWork, vb.)
+│   │   │   └── Errors/                  # Domain errors ve Result types
+│   │   └── ProtectedPayment.SharedKernel/  # Paylaşılan domain primitives
+│   │
+│   ├── application/                     # Application Layer
+│   │   ├── ProtectedPayment.Application/           # Use cases ve business logic
+│   │   │   ├── Orders/                  # Order service ve use cases
+│   │   │   ├── OutboxMessages/          # Outbox pattern implementation
+│   │   │   └── InboxMessages/           # Inbox pattern implementation
+│   │   └── ProtectedPayment.Application.Contracts/ # DTOs ve Contracts
+│   │
+│   ├── infrastructure/                  # Infrastructure Layer
+│   │   └── ProtectedPayment.Infrastructure/
+│   │       ├── Database/                # DbContext, Configurations, Migrations
+│   │       ├── Repositories/            # Repository implementations
+│   │       └── Messaging/               # Messaging implementations
+│   │           ├── RabbitMQ/            # RabbitMQ bus service
+│   │           ├── Kafka/               # Kafka bus service
+│   │           └── Redis/               # Redis bus service
+│   │
+│   └── host/                            # Presentation/Host Layer
+│       ├── ProtectedPayment.Order.API/  # RESTful API (HTTP endpoints)
+│       └── ProtectedPayment.Worker/     # Background services (Message consumers)
+│
+└── docker-compose files                 # Container orchestration
+```
+
+### 🎯 Katman Sorumlulukları
+
+#### 1️⃣ **Domain Layer** (`domain/`)
+- **Bağımlılık**: Hiçbir katmana bağımlı değil (tamamen izole)
+- **İçerik**: 
+  - Domain entities (Order, OutboxMessage, InboxMessage, IdempotencyKey)
+  - Event models (OrderPendingEvent, OrderCancelledEvent, OrderConfirmedEvent, OrderShippedEvent)
+  - Repository interfaces
+  - Domain errors ve business rules
+  - SharedKernel (Shared types, primitives)
+
+#### 2️⃣ **Application Layer** (`application/`)
+- **Bağımlılık**: Sadece Domain Layer'a bağımlı
+- **İçerik**:
+  - Use cases ve application services (OrderService)
+  - Outbox Pattern implementation (OutboxMessageService)
+  - Inbox Pattern implementation (InboxMessageService)
+  - DTOs ve Contracts
+  - Business orchestration
+
+#### 3️⃣ **Infrastructure Layer** (`infrastructure/`)
+- **Bağımlılık**: Domain ve Application katmanlarına bağımlı
+- **İçerik**:
+  - Entity Framework Core DbContext
+  - Repository implementations
+  - Messaging implementations (RabbitMQ, Kafka, Redis)
+  - Database migrations
+  - External service integrations
+  - SaveChangesInterceptor (Outbox pattern için)
+
+#### 4️⃣ **Host Layer** (`host/`)
+- **Bağımlılık**: Tüm katmanlara bağımlı (composition root)
+- **İçerik**:
+  - **Order.API**: RESTful API endpoints, controllers
+  - **Worker**: Background services (OrderPendingConsumer, OrderCancelledConsumer, vb.)
+  - Dependency Injection configuration
+  - Middleware pipeline
+  - Application startup
+
+---
+
+## 🔄 İş Akışı
+
+### Event-Driven Flow
 ```
 1️⃣ Kullanıcı sipariş oluşturur
    ↓
@@ -41,12 +136,20 @@
 5️⃣ Sipariş sevkiyat aşamasına geçer
 ```
 
+### Messaging Patterns
+
+#### 🔸 **Outbox Pattern**
+Veritabanı transaction'ı içinde oluşturulan event'ler `OutboxMessage` tablosuna yazılır. Background service bu mesajları okuyup message broker'a gönderir. Bu sayede distributed transaction problemi çözülür.
+
+#### 🔸 **Inbox Pattern**
+Gelen mesajlar işlenmeden önce `InboxMessage` tablosuna kaydedilir. Aynı mesaj tekrar gelirse idempotency kontrolü yapılır ve işlem atlanır.
+
 ---
 
 ## ⚡ Kullanılan Teknolojiler
 
 ### Backend Framework
-- **.NET 10** - Modern, high-performance web api ve background service uygulamaları
+- **.NET 10** - Modern, yüksek performanslı web API ve arka plan servis uygulamaları
 - **ASP.NET Core** - Order API
 - **.NET Worker Service** - Background services (Event consumers)
 - **Entity Framework Core 10** - ORM
@@ -58,8 +161,18 @@
 
 ### Veritabanı & ORM
 - **PostgreSQL** - İlişkisel veritabanı
-- **Entity Framework Core 10** - ORM ve database management
-- **Entity Framework Core Migrations** - Veritabanı versionlama
+- **Entity Framework Core 10** - ORM ve veritabanı yönetimi
+- **Entity Framework Core Migrations** - Veritabanı versiyonlama
+- **SaveChangesInterceptor** - Outbox pattern için otomatik event kayıt
+
+### Design Patterns & Principles
+- **Clean Architecture** - Domain-centric layered architecture
+- **Outbox Pattern** - Transactional messaging guarantee
+- **Inbox Pattern** - Idempotent message processing
+- **Repository Pattern** - Data access abstraction
+- **Unit of Work Pattern** - Transaction management
+- **Event-Driven Architecture** - Asynchronous messaging between services
+- **Dependency Injection** - Inversion of Control
 
 ### Diğer Kütüphaneler
 - **Confluent.Kafka** (v2.13.0) - Kafka client
@@ -68,6 +181,8 @@
 - **Newtonsoft.Json** (v13.0.4) - JSON serialization
 - **Polly** (v8.6.5) - Dayanıklılık ve hata yönetimi
 - **Scalar.AspNetCore** - API dokümantasyonu
+- **ETPackages.Result** (v1.0.0) - Result pattern implementasyonu ve hata yönetimi
+- **ETPackages.Endpoints** (v2.0.0) - Minimal API endpoint tanımlama altyapısı
 
 ### Containerization
 - **Docker** - Application containerization
