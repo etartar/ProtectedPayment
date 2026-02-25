@@ -10,14 +10,14 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.rabbitmq.yml" />
-	<None Include="docker-compose.kafka.yml" />	  
-    <None Include="docker-compose.redis.yml" />	  	  
+    <None Include="docker-compose.kafka.yml" />
+    <None Include="docker-compose.redis.yml" />
     <None Include="docker-compose.yml" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
-	  
     <None Include="launchSettings.json" />
     <None Include=".dockerignore" />
+    <None Include="README_EN.md" />
   </ItemGroup>
 </Project>
