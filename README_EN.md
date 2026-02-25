@@ -2,6 +2,15 @@
 
 <div align="center">
 
+[![Turkish](https://img.shields.io/badge/🇹🇷_Turkish-blue?style=for-the-badge)](README.md)
+[![English](https://img.shields.io/badge/🇬🇧_English-gray?style=for-the-badge)](README_EN.md)
+
+</div>
+
+---
+
+<div align="center">
+
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
 ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)
